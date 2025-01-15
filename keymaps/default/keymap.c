@@ -14,6 +14,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include QMK_KEYBOARD_H
+#include "gpio.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    /*
@@ -49,8 +50,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 
 #ifdef OLED_ENABLE
-
-
 static void render_logo(void) {
     static const char PROGMEM qmk_logo[] = {
         0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
@@ -66,3 +65,9 @@ bool oled_task_user(void) {
     return false;
 }
 #endif
+
+
+void keyboard_pre_init_user(void) {
+    gpio_set_pin_output(17);
+    gpio_write_pin_high(17);
+}
