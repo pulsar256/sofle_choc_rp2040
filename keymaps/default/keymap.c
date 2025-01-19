@@ -85,7 +85,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 };
 #endif
 
-
 painter_device_t display;
 void keyboard_pre_init_user(void) {
     // enable power led on the ProMicro RP2040
@@ -102,17 +101,40 @@ void keyboard_post_init_kb(void) {
     mcs_font = qp_load_font_mem(font_minecraft_standard);
 }
 
-void housekeeping_task_user(void) {
+void draw_text_centered(const char * text, uint16_t y) {
+    uint16_t width = qp_textwidth(mcs_font, text);
+    qp_drawtext(display, (OLED_WIDTH-width)/2, y, mcs_font, text);
+}
+
+static bool suspended = false;
+void draw_frame(void) {
     static uint32_t last_draw     = 0;
     static uint32_t frame_counter = 0;
     if (timer_elapsed32(last_draw) > 33) { // Throttle to 30fps
         last_draw = timer_read32();
-        qp_rect(display, 0, 0, 32, 16, 0, 0, 0, true);
+
+        qp_clear(display);
         for (uint8_t i = 0; i < OLED_WIDTH; i++) {
             qp_setpixel(display, i, sin((i + frame_counter++) / 5.0) * 8 + 8, 255, 255, 255);
         }
-        qp_drawtext(display, 0, OLED_HEIGHT - font_minecraft_height * 2, mcs_font, "Sofle");
-        qp_drawtext(display, 0, OLED_HEIGHT - font_minecraft_height, mcs_font, "Choc");
+
+        draw_text_centered("Sofle", 4);
         qp_flush(display);
     }
+}
+
+void suspend_power_down_user() {
+    rgb_matrix_set_suspend_state(true);
+    qp_power(display, false);
+    suspended = true;
+}
+
+void suspend_wakeup_init_user() {
+    qp_power(display, true);
+    rgb_matrix_set_suspend_state(false);
+    suspended = false;
+}
+
+void housekeeping_task_user(void) {
+    if (!suspended) draw_frame();
 }
