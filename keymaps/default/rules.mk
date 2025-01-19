@@ -1,5 +1,8 @@
 ENCODER_MAP_ENABLE = yes
 SERIAL_DRIVER = vendor
 WS2812_DRIVER = vendor
-OLED_ENABLE = yes
+OLED_ENABLE = no
 OLED_DRIVER = ssd1306
+QUANTUM_PAINTER_ENABLE = yes
+QUANTUM_PAINTER_DRIVERS += sh1106_i2c
+SRC += generated/minecraft_standard.qff.c

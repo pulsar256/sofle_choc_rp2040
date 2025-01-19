@@ -42,3 +42,7 @@ from the PCB and hook up the OLED directly to the back of the mcu breakout board
 ![Bridge USB 5V rail to PCB](doc/bridge.png)
 ![OLED Wiring](doc/oled.png)
 ![OLED Mounting](doc/oled_mount.png)
+
+## Acknowledgements
+
+- Embedded font "Minecraft Standard" by Marek Poláček licensed under CC PD

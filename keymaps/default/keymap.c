@@ -16,6 +16,11 @@
 
 #include QMK_KEYBOARD_H
 #include "gpio.h"
+#include "qp.h"
+#include "qp_comms.h"
+#include "generated/minecraft_standard.qff.h"
+#include <math.h>
+
 enum layer_names { LAYER_0, LAYER_1, LAYER_2, LAYER_3 };
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -80,23 +85,34 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 };
 #endif
 
-#ifdef OLED_ENABLE
-static void render_logo(void) {
-    static const char PROGMEM raw_logo[] = {
-        0, 112, 128, 96, 16, 224, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 192, 192, 0, 0,   0,   192, 192, 192, 0, 0, 0,   0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 248, 248, 96, 96,  96,  120, 120, 120, 0, 0, 0, 0, 0, 0, 0, 0, 240, 16, 16,  16, 16,  0, 0, 0, 0, 0, 240, 16, 208, 208, 208, 208, 208, 208, 208, 208, 16, 240, 0, 0, 76, 82, 210, 82, 204, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 207, 239, 99, 99, 99, 99, 227, 195, 0, 0, 81, 91, 213, 81, 209, 0, 0, 0, 0, 0, 0, 0, 253, 253, 12, 252, 248, 192, 252, 252, 0, 0, 0, 0, 0, 0, 0, 0, 18, 18, 158, 82, 76, 0, 0, 0, 0, 0, 255, 0, 192, 224, 103, 111, 108, 108, 111, 111, 0, 255, 0,
-        0, 120, 8,   9,  8,  11,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 243, 247, 6, 230, 246, 54,  247, 243, 0, 0, 136, 136, 169, 218, 137, 0, 0, 0, 0, 0, 0, 0, 126, 126, 96, 124, 124, 96,  126, 126, 0, 0, 0, 0, 0, 0, 0, 0, 241, 17, 115, 20, 244, 0, 0, 0, 0, 0, 255, 0,  247, 247, 0,   240, 240, 48,  240, 224, 0,  255, 0, 0, 15, 1,  7,   1,  15,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,   3,   3,  3,  3,  0,  3,   3,   0, 0, 0,  0,  0,   0,  0,   0, 0, 0, 0, 0, 0, 0, 48,  48,  63, 63,  51,  55,  62,  60,  0, 0, 0, 0, 0, 0, 0, 0, 18, 10, 14,  18, 14, 0, 0, 0, 0, 0, 15,  8, 9,   11,  11,  11,  11,  8,   11,  11,  8, 15,  0,
-    };
-    oled_write_raw_P(raw_logo, sizeof(raw_logo));
-}
 
-bool oled_task_user(void) {
-    render_logo();
-    return false;
-}
-#endif
-
+painter_device_t display;
 void keyboard_pre_init_user(void) {
     // enable power led on the ProMicro RP2040
     gpio_set_pin_output(17);
     gpio_write_pin_high(17);
+
+    display = qp_sh1106_make_i2c_device(OLED_HEIGHT,OLED_WIDTH, 0x3C); // width and height are swapped before rotation
+    qp_init(display, QP_ROTATION_90);
+    qp_clear(display);
+}
+
+static painter_font_handle_t mcs_font;
+void keyboard_post_init_kb(void) {
+    mcs_font = qp_load_font_mem(font_minecraft_standard);
+}
+
+void housekeeping_task_user(void) {
+    static uint32_t last_draw     = 0;
+    static uint32_t frame_counter = 0;
+    if (timer_elapsed32(last_draw) > 33) { // Throttle to 30fps
+        last_draw = timer_read32();
+        qp_rect(display, 0, 0, 32, 16, 0, 0, 0, true);
+        for (uint8_t i = 0; i < OLED_WIDTH; i++) {
+            qp_setpixel(display, i, sin((i + frame_counter++) / 5.0) * 8 + 8, 255, 255, 255);
+        }
+        qp_drawtext(display, 0, OLED_HEIGHT - font_minecraft_height * 2, mcs_font, "Sofle");
+        qp_drawtext(display, 0, OLED_HEIGHT - font_minecraft_height, mcs_font, "Choc");
+        qp_flush(display);
+    }
 }
