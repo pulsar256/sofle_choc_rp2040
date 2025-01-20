@@ -113,7 +113,7 @@ void draw_frame(void) {
     if (timer_elapsed32(last_draw) > 33) { // Throttle to 30fps
         last_draw = timer_read32();
 
-        qp_clear(display);
+        qp_rect(display, 0, 0, 32, 16, 0, 0, 0, true);
         for (uint8_t i = 0; i < OLED_WIDTH; i++) {
             qp_setpixel(display, i, sin((i + frame_counter++) / 5.0) * 8 + 8, 255, 255, 255);
         }
