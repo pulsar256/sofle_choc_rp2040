@@ -22,8 +22,8 @@
 #include <math.h>
 
 enum layer_names { LAYER_0, LAYER_1, LAYER_2, LAYER_3 };
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
 *         c5     c4     c3     c2     c1     c0
 *     ,-----------------------------------------.                    ,-----------------------------------------.
@@ -73,7 +73,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        _______, _______, _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
                          _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______
     ),
-
 };
 
 #if defined(ENCODER_MAP_ENABLE)
@@ -110,7 +109,7 @@ static bool suspended = false;
 void draw_frame(void) {
     static uint32_t last_draw     = 0;
     static uint32_t frame_counter = 0;
-    if (timer_elapsed32(last_draw) > 33) { // Throttle to 30fps
+    if (timer_elapsed32(last_draw) > 33) {
         last_draw = timer_read32();
 
         qp_rect(display, 0, 0, 32, 16, 0, 0, 0, true);
@@ -125,16 +124,14 @@ void draw_frame(void) {
 
 void suspend_power_down_user() {
     rgb_matrix_set_suspend_state(true);
-    qp_power(display, false);
     suspended = true;
 }
 
 void suspend_wakeup_init_user() {
-    qp_power(display, true);
     rgb_matrix_set_suspend_state(false);
     suspended = false;
 }
 
 void housekeeping_task_user(void) {
-    if (!suspended) draw_frame();
+   draw_frame();
 }
