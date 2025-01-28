@@ -7,6 +7,9 @@ and hardware mods for RP2040 compatibility.
 * Hardware Supported:
     * [Sofle Choc v2.1](https://github.com/josefadamcik/SofleKeyboard/tree/master/Sofle_Choc)
     * [ProMicro RP2040](https://de.aliexpress.com/item/1005006599393967.html)
+* [3d Printed Enclosure](https://www.printables.com/model/1168416-sofle-choc-case-travel-enclosure-and-tilt-stand)
+
+![Sofle Choc](doc/sofle_choc.jpg)
 
 ## Build environment setup
 
@@ -25,7 +28,7 @@ From QMK firmware root directory:
 
 ## Bootloader
 
-Enter the bootloader in 3 ways:
+Enter the bootloader in 2 ways:
 
 * **Bootmagic reset**: Hold down the key at (0,0) in the matrix (usually the top left key or Escape) and plug in the
   keyboard
