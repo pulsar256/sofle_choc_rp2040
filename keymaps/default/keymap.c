@@ -62,8 +62,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [LAYER_2] = LAYOUT(
        KC_F1,   KC_F2,                 KC_F3,                  KC_F4,   KC_F5,   KC_F6,                         KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-       _______, KC_LEFT_BRACKET,       KC_RIGHT_BRACKET,       _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
+       _______, KC_LEFT_BRACKET,       KC_RIGHT_BRACKET,       _______, _______, _______,                       _______, KC_VOLD, KC_MSTP, KC_VOLU, _______, KC_PAUSE,
+       _______, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), _______, _______, _______,                       _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, KC_PRINT_SCREEN,
        _______, _______,               _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
                                        _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______
     ),
@@ -95,20 +95,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             if (index >= led_min && index < led_max && index != NO_LED) {
                 uint16_t layer0_keycode = keymap_key_to_keycode(0, (keypos_t){col, row});
 
-                if (get_highest_layer(layer_state) > 0 && keymap_key_to_keycode(layer, (keypos_t){col, row}) > KC_TRNS) {
-                    switch (layer) {
-                        case 1:
-                            rgb_matrix_set_color(index, RGB_RED);
-                            break;
-                        case 2:
-                            rgb_matrix_set_color(index, RGB_GREEN);
-                            break;
-                        case 3:
-                            rgb_matrix_set_color(index, RGB_BLUE);
-                            break;
-                    }
-                }
-
                 switch (layer0_keycode) {
                     case MO(LAYER_1):
                         rgb_matrix_set_color(index, RGB_RED);
@@ -125,6 +111,23 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                     case KC_J:
                         rgb_matrix_set_color(index, RGB_YELLOW);
                         break;
+                    case KC_LGUI:
+                        rgb_matrix_set_color(index, RGB_YELLOW);
+                        break;
+                }
+
+                if (get_highest_layer(layer_state) > 0 && keymap_key_to_keycode(layer, (keypos_t){col, row}) > KC_TRNS) {
+                    switch (layer) {
+                        case 1:
+                            rgb_matrix_set_color(index, RGB_RED);
+                            break;
+                        case 2:
+                            rgb_matrix_set_color(index, RGB_GREEN);
+                            break;
+                        case 3:
+                            rgb_matrix_set_color(index, RGB_BLUE);
+                            break;
+                    }
                 }
             }
         }
@@ -144,7 +147,7 @@ void keyboard_pre_init_user(void) {
 
 void keyboard_post_init_kb(void) {
     mcs_font = qp_load_font_mem(font_minecraft_standard);
-    rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
+    rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
 }
 
 void draw_text_centered(const char *text, uint16_t y) {
