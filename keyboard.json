@@ -40,9 +40,13 @@
                 "wpm": true,
                 "matrix_state": true,
                 "layer_state": true
-            }
-
+            },
+            "watchdog": true
+        },
+        "usb_detect": {
+            "enabled": true
         }
+
     },
     "matrix_pins": {
         "cols": ["GP27", "GP26", "GP22", "GP20", "GP23", "GP21"],
