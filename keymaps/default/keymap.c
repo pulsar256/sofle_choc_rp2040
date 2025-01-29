@@ -22,20 +22,22 @@
 #include <math.h>
 
 enum layer_names { LAYER_0, LAYER_1, LAYER_2, LAYER_3 };
+static painter_device_t      display;
+static painter_font_handle_t mcs_font;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
 *         c5     c4     c3     c2     c1     c0
 *     ,-----------------------------------------.                    ,-----------------------------------------.
-* r0  |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  `   |
+* r0  |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  | Bspc |
 *     |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-* r1  | ESC  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Bspc |
+* r1  | ESC  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Del  |
 *     |------+------+------+------+------+------|                    |------+------+------+------+------+------|
 * r2  | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
 *     |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
 * r3  |LShift|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
 *     `-----------------------------------------/       /     \      \-----------------------------------------'
-* r4             | LCTL | LGUI | LCMD | LALT | /Enter  /       \Space \  | RALT | RCMD | RGUI | RCTL |
+* r4             | LCTL | MO1  | LCMD | LALT | /Enter  /       \Space \  | RALT | RCMD | RGUI | RCTL |
 *                |      |      |      |      |/       /         \      \ |      |      |      |      |
 *                `----------------------------------'           '------''---------------------------'
 */
@@ -43,35 +45,35 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // encoder buttons are mapped to c5/r4 but are moved up one row for better visualization
 
     [LAYER_0] = LAYOUT(
-       KC_GRV,   KC_1,    KC_2,        KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,        KC_8,            KC_9,    KC_0,     KC_GRV,
-       KC_ESC,   KC_Q,    KC_W,        KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,        KC_I,            KC_O,    KC_P,     KC_BSPC,
+       KC_GRV,   KC_1,    KC_2,        KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,        KC_8,            KC_9,    KC_0,     KC_BSPC,
+       KC_ESC,   KC_Q,    KC_W,        KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,        KC_I,            KC_O,    KC_P,     KC_DEL,
        KC_TAB,   KC_A,    KC_S,        KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,        KC_K,            KC_L,    KC_SCLN,  KC_QUOT,
        KC_LSFT,  KC_Z,    KC_X,        KC_C,    KC_V,    KC_B,    KC_MUTE,   KC_MPLY,  KC_N,    KC_M,        KC_COMM,         KC_DOT,  KC_SLSH,  KC_RSFT,
                           KC_LCTL, MO(LAYER_1), KC_LGUI, KC_LALT, KC_ENT,    KC_SPC,   KC_RALT, MO(LAYER_3), MO(LAYER_2),     KC_RCTL
     ),
 
     [LAYER_1] = LAYOUT(
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
+       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, KC_MINUS, KC_EQUAL,     KC_PAGE_UP,
+       _______, _______, _______, _______, _______, _______,                       _______, KC_HOME, KC_UP,   KC_END,   _______,      KC_PAGE_DOWN,
+       _______, _______, _______, _______, _______, _______,                       _______, KC_LEFT, KC_DOWN, KC_RIGHT, KC_BACKSLASH, _______,
+       _______, _______, _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______,  _______,      _______,
                          _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______
     ),
 
     [LAYER_2] = LAYOUT(
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
-                         _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______
+       KC_F1,   KC_F2,                 KC_F3,                  KC_F4,   KC_F5,   KC_F6,                         KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
+       _______, KC_LEFT_BRACKET,       KC_RIGHT_BRACKET,       _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
+       _______, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
+       _______, _______,               _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
+                                       _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______
     ),
 
     [LAYER_3] = LAYOUT(
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
-       _______, _______, _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
-                         _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______
+        _______, _______, _______,    _______,    _______,    _______,                       _______, _______, _______,  KC_MINUS, KC_EQUAL,     KC_PAGE_UP,
+        _______, _______, _______,    _______,    _______,    _______,                       _______, KC_HOME, KC_UP,    KC_END,   _______,      KC_PAGE_DOWN,
+        _______, _______, _______,    _______,    _______,    _______,                       _______, KC_LEFT, KC_DOWN , KC_RIGHT, KC_BACKSLASH, _______,
+        _______, _______, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), _______, _______,     _______, _______, _______, _______,  _______,  _______,      _______,
+                          _______,    _______,    _______,    _______, _______,     _______, _______, _______, _______,  _______
     ),
 };
 
@@ -80,58 +82,106 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [LAYER_0] ={ ENCODER_CCW_CW(KC_VOLD, KC_VOLU),  ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
     [LAYER_1] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT), ENCODER_CCW_CW(KC_UP, KC_DOWN) },
     [LAYER_2] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT), ENCODER_CCW_CW(KC_UP, KC_DOWN) },
-    [LAYER_3] ={ ENCODER_CCW_CW(KC_VOLD, KC_VOLU),  ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
+    [LAYER_3] ={ ENCODER_CCW_CW(LCTL(KC_Z), C_S_T(KC_Z)),  ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
 };
 #endif
 
-painter_device_t display;
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t layer = get_highest_layer(layer_state);
+
+    for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+        for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+            uint8_t index = g_led_config.matrix_co[row][col];
+            if (index >= led_min && index < led_max && index != NO_LED) {
+                uint16_t layer0_keycode = keymap_key_to_keycode(0, (keypos_t){col, row});
+
+                if (get_highest_layer(layer_state) > 0 && keymap_key_to_keycode(layer, (keypos_t){col, row}) > KC_TRNS) {
+                    switch (layer) {
+                        case 1:
+                            rgb_matrix_set_color(index, RGB_RED);
+                            break;
+                        case 2:
+                            rgb_matrix_set_color(index, RGB_GREEN);
+                            break;
+                        case 3:
+                            rgb_matrix_set_color(index, RGB_BLUE);
+                            break;
+                    }
+                }
+
+                switch (layer0_keycode) {
+                    case MO(LAYER_1):
+                        rgb_matrix_set_color(index, RGB_RED);
+                        break;
+                    case MO(LAYER_2):
+                        rgb_matrix_set_color(index, RGB_GREEN);
+                        break;
+                    case MO(LAYER_3):
+                        rgb_matrix_set_color(index, RGB_BLUE);
+                        break;
+                    case KC_F:
+                        rgb_matrix_set_color(index, RGB_YELLOW);
+                        break;
+                    case KC_J:
+                        rgb_matrix_set_color(index, RGB_YELLOW);
+                        break;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void keyboard_pre_init_user(void) {
     // enable power led on the ProMicro RP2040
     gpio_set_pin_output(17);
     gpio_write_pin_high(17);
 
-    display = qp_sh1106_make_i2c_device(OLED_HEIGHT,OLED_WIDTH, 0x3C); // width and height are swapped before rotation
+    display = qp_sh1106_make_i2c_device(OLED_HEIGHT, OLED_WIDTH, 0x3C); // width and height are swapped before rotation
     qp_init(display, QP_ROTATION_90);
     qp_clear(display);
 }
 
-static painter_font_handle_t mcs_font;
 void keyboard_post_init_kb(void) {
     mcs_font = qp_load_font_mem(font_minecraft_standard);
+    rgb_matrix_mode(RGB_MATRIX_MULTISPLASH);
 }
 
-void draw_text_centered(const char * text, uint16_t y) {
+void draw_text_centered(const char *text, uint16_t y) {
     uint16_t width = qp_textwidth(mcs_font, text);
-    qp_drawtext(display, (OLED_WIDTH-width)/2, y, mcs_font, text);
+    qp_drawtext(display, (OLED_WIDTH - width) / 2, y, mcs_font, text);
 }
 
-static bool suspended = false;
 void draw_frame(void) {
+    static char strbuffer[32];
     static uint32_t last_draw     = 0;
     static uint32_t frame_counter = 0;
     if (timer_elapsed32(last_draw) > 33) {
         last_draw = timer_read32();
 
-        qp_rect(display, 0, 0, 32, 16, 0, 0, 0, true);
+        qp_rect(display, 0, 0, OLED_WIDTH, OLED_HEIGHT, 0, 0, 0, true);
+
         for (uint8_t i = 0; i < OLED_WIDTH; i++) {
             qp_setpixel(display, i, sin((i + frame_counter++) / 5.0) * 8 + 8, 255, 255, 255);
         }
-
         draw_text_centered("Sofle", 4);
+        snprintf(strbuffer, 32, "Lyr: %d", get_highest_layer(layer_state));
+        draw_text_centered((const char *)&strbuffer, 28);
+        draw_text_centered("WPM:", 50);
+        snprintf(strbuffer, 32, "%d", get_current_wpm());
+        draw_text_centered((const char *)&strbuffer, 60);
         qp_flush(display);
     }
 }
 
 void suspend_power_down_user() {
     rgb_matrix_set_suspend_state(true);
-    suspended = true;
 }
 
 void suspend_wakeup_init_user() {
     rgb_matrix_set_suspend_state(false);
-    suspended = false;
 }
 
 void housekeeping_task_user(void) {
-   draw_frame();
+    draw_frame();
 }
