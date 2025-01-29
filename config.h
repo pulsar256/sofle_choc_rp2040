@@ -11,6 +11,3 @@
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_LED GP17
 
 #define QUANTUM_PAINTER_DISPLAY_TIMEOUT 30000
-
-#define RGB_MATRIX_SLEEP                    // turn off effects when suspended
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
