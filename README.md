@@ -14,25 +14,33 @@ and hardware mods for RP2040 compatibility.
 ## Build environment setup
 
 Set up QMK [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) according to the official
-documentation and copy contents of this repository into `keyboards/sofle_choc_rp2040`
+documentation. Make sure to set the `user.qmk_home` configuration option and point it to your qmk_firmware directory,
+for example:
+
+```shell
+qmk config user.qmk_home=$HOME/qmk_firmware
+```
 
 ## Build
 
-From QMK firmware root directory:
-
-    make sofle_choc_rp2040:default
+```shell
+make make build
+```
 
 ## Flash
 
-    make sofle_choc_rp2040:default:flash
+```shell
+make make flash
+```
 
 ## Bootloader
 
-Enter the bootloader in 2 ways:
+Enter the bootloader using one of the methods:
 
 * **Bootmagic reset**: Hold down the key at (0,0) in the matrix (usually the top left key or Escape) and plug in the
   keyboard
-* **Physical reset button**: On the microcontroller board, hold down the boot button and power on or reset the board.ú
+* **Physical reset button**: On the microcontroller board, hold down the boot button and power on or reset the board.
+* double tap the reset button once the initial version of this firmware has been flashed 
 
 ## Required Hardware Modifications
 

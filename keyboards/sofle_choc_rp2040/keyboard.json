@@ -7,15 +7,19 @@
     "encoder": {
         "enabled": true,
         "rotary": [
-            { "pin_a": "GP29", "pin_b": "GP28" }
+            {
+                "pin_a": "GP29",
+                "pin_b": "GP28",
+                "resolution": 2
+            }
         ]
     },
     "features": {
         "bootmagic": true,
-        "command": false,
-        "console": false,
+        "command": true,
+        "console": true,
         "extrakey": true,
-        "mousekey": true,
+        "mousekey": false,
         "nkro": true,
         "rgb_matrix": true,
         "oled": false
@@ -29,14 +33,18 @@
         "encoder": {
             "right": {
                 "rotary": [
-                    { "pin_a": "GP29", "pin_b": "GP28" }
+                    {
+                        "pin_a": "GP29",
+                        "pin_b": "GP28",
+                        "resolution": 2
+                    }
                 ]
             }
         },
         "transport": {
             "protocol": "serial",
             "sync": {
-                "oled": true,
+                "oled": false,
                 "wpm": true,
                 "matrix_state": true,
                 "layer_state": true
