@@ -21,4 +21,5 @@ flash: setup
 	qmk flash -kb sofle_choc_rp2040 -km default
 
 clean:
+	qmk clean
 	rm $(SC2040_SYMLINK)
