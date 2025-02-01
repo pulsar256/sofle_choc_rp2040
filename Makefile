@@ -8,9 +8,7 @@ SC2040_SYMLINK = $(QMK_FIRMWARE_ROOT)/keyboards/sofle_choc_rp2040
 
 .PHONY: setup
 setup:
-	echo `qmk config -ro user.qmk_home | cut -d= -f2`
-	echo "$(SC2040_SYMLINK)"
-	if [ ! -L $(SC2040_SYMLINK) ] ; then echo "creating symlink $(SC2040_SYMLINK)"; ln -s `pwd`/keyboards/sofle_choc_rp2040 $(SC2040_SYMLINK);  fi
+	@if [ ! -L $(SC2040_SYMLINK) ] ; then echo "creating symlink $(SC2040_SYMLINK)"; ln -s `pwd`/keyboards/sofle_choc_rp2040 $(SC2040_SYMLINK);  fi
 
 .PHONY: build
 build: setup
@@ -22,4 +20,4 @@ flash: setup
 
 clean:
 	qmk clean
-	rm $(SC2040_SYMLINK)
+	@if [ -L $(SC2040_SYMLINK) ]; then rm $(SC2040_SYMLINK); fi
