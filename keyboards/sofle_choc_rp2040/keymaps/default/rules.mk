@@ -6,4 +6,5 @@ OLED_DRIVER = ssd1306
 QUANTUM_PAINTER_ENABLE = yes
 QUANTUM_PAINTER_DRIVERS += sh1106_i2c
 WPM_ENABLE = yes
+DEFERRED_EXEC_ENABLE = yes
 SRC += generated/minecraft_standard.qff.c

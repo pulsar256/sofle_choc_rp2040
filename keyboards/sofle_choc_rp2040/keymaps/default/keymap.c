@@ -17,13 +17,12 @@
 #include QMK_KEYBOARD_H
 #include "gpio.h"
 #include "qp.h"
-#include "qp_comms.h"
+
 #include "generated/minecraft_standard.qff.h"
 #include <math.h>
 
 enum layer_names { LAYER_0, LAYER_1, LAYER_2, LAYER_3 };
-static painter_device_t      display;
-static painter_font_handle_t mcs_font;
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
@@ -37,7 +36,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 *     |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
 * r3  |LShift|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
 *     `-----------------------------------------/       /     \      \-----------------------------------------'
-* r4             | LCTL | MO1  | LCMD | LALT | /Enter  /       \Space \  | RALT | RCMD | RGUI | RCTL |
+* r4             | LCTL | MO1  | LCMD | LALT | /Enter  /       \Space \  | RALT |  MO3 |  MO2 | RCTL |
 *                |      |      |      |      |/       /         \      \ |      |      |      |      |
 *                `----------------------------------'           '------''---------------------------'
 */
@@ -132,49 +131,49 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             }
         }
     }
-    return false;
+    return true;
 }
 
-void keyboard_pre_init_user(void) {
-    // enable power led on the ProMicro RP2040
-    gpio_set_pin_output(17);
-    gpio_write_pin_high(17);
-
-    display = qp_sh1106_make_i2c_device(OLED_HEIGHT, OLED_WIDTH, 0x3C); // width and height are swapped before rotation
-    qp_init(display, QP_ROTATION_90);
-    qp_clear(display);
-}
-
-void keyboard_post_init_kb(void) {
-    mcs_font = qp_load_font_mem(font_minecraft_standard);
-    rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
-}
+static painter_device_t      display;
+static painter_font_handle_t mcs_font;
+static deferred_token        display_task_token;
+static char                  strbuffer[32];
+static uint32_t              frame_counter = 0;
 
 void draw_text_centered(const char *text, uint16_t y) {
     uint16_t width = qp_textwidth(mcs_font, text);
     qp_drawtext(display, (OLED_WIDTH - width) / 2, y, mcs_font, text);
 }
 
-void draw_frame(void) {
-    static char strbuffer[32];
-    static uint32_t last_draw     = 0;
-    static uint32_t frame_counter = 0;
-    if (timer_elapsed32(last_draw) > 33) {
-        last_draw = timer_read32();
+uint32_t draw_frame(uint32_t trigger_time, void *cb_arg) {
+    qp_rect(display, 0, 0, OLED_WIDTH, OLED_HEIGHT, 0, 0, 0, true);
 
-        qp_rect(display, 0, 0, OLED_WIDTH, OLED_HEIGHT, 0, 0, 0, true);
-
-        for (uint8_t i = 0; i < OLED_WIDTH; i++) {
-            qp_setpixel(display, i, sin((i + frame_counter++) / 5.0) * 8 + 8, 255, 255, 255);
-        }
-        draw_text_centered("Sofle", 4);
-        snprintf(strbuffer, 32, "Lyr: %d", get_highest_layer(layer_state));
-        draw_text_centered((const char *)&strbuffer, 28);
-        draw_text_centered("WPM:", 50);
-        snprintf(strbuffer, 32, "%d", get_current_wpm());
-        draw_text_centered((const char *)&strbuffer, 60);
-        qp_flush(display);
+    for (uint8_t i = 0; i < OLED_WIDTH; i++) {
+        qp_setpixel(display, i, sin((i + frame_counter++) / 5.0) * 8 + 8, 255, 255, 255);
     }
+    draw_text_centered("Sofle", 4);
+    snprintf(strbuffer, 32, "Lyr: %d", get_highest_layer(layer_state));
+    draw_text_centered((const char *)&strbuffer, 28);
+
+    draw_text_centered("WPM:", 50);
+    snprintf(strbuffer, 32, "%d", get_current_wpm());
+    draw_text_centered((const char *)&strbuffer, 60);
+    qp_flush(display);
+    return 100;
+}
+
+void keyboard_pre_init_user(void) {
+    gpio_set_pin_output(17);
+    gpio_write_pin_high(17);
+    display = qp_sh1106_make_i2c_device(OLED_HEIGHT, OLED_WIDTH, 0x3C); // width and height are swapped before rotation
+    qp_init(display, QP_ROTATION_90);
+    qp_clear(display);
+    mcs_font = qp_load_font_mem(font_minecraft_standard);
+}
+
+void keyboard_post_init_kb(void) {
+    rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
+    display_task_token = defer_exec(1500, draw_frame, NULL);
 }
 
 void suspend_power_down_user() {
@@ -186,5 +185,4 @@ void suspend_wakeup_init_user() {
 }
 
 void housekeeping_task_user(void) {
-    draw_frame();
 }
