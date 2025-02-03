@@ -159,7 +159,7 @@ uint32_t draw_frame(uint32_t trigger_time, void *cb_arg) {
     snprintf(strbuffer, 32, "%d", get_current_wpm());
     draw_text_centered((const char *)&strbuffer, 60);
     qp_flush(display);
-    return 100;
+    return 250;
 }
 
 void keyboard_pre_init_user(void) {
@@ -178,10 +178,12 @@ void keyboard_post_init_kb(void) {
 
 void suspend_power_down_user() {
     rgb_matrix_set_suspend_state(true);
+    cancel_deferred_exec(display_task_token);
 }
 
 void suspend_wakeup_init_user() {
     rgb_matrix_set_suspend_state(false);
+    display_task_token = defer_exec(1500, draw_frame, NULL);
 }
 
 void housekeeping_task_user(void) {
