@@ -22,7 +22,7 @@
         "mousekey": false,
         "nkro": true,
         "rgb_matrix": true,
-        "oled": false
+        "oled": true
     },
     "split": {
         "enabled": true,
