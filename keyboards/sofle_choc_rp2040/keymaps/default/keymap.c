@@ -78,9 +78,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [LAYER_0] ={ ENCODER_CCW_CW(KC_VOLD, KC_VOLU),  ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
-    [LAYER_1] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT), ENCODER_CCW_CW(KC_UP, KC_DOWN) },
-    [LAYER_2] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT), ENCODER_CCW_CW(KC_UP, KC_DOWN) },
+    [LAYER_0] ={ ENCODER_CCW_CW(KC_VOLD, KC_VOLU),       ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
+    [LAYER_1] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),      ENCODER_CCW_CW(KC_UP, KC_DOWN)   },
+    [LAYER_2] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),      ENCODER_CCW_CW(KC_UP, KC_DOWN)   },
     [LAYER_3] ={ ENCODER_CCW_CW(LCTL(KC_Z), RCS(KC_Z)),  ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
 };
 #endif
@@ -165,6 +165,8 @@ uint32_t draw_frame(uint32_t trigger_time, void *cb_arg) {
 void keyboard_pre_init_user(void) {
     gpio_set_pin_output(17);
     gpio_write_pin_high(17);
+
+    // i2c address usually either 0x3C or 0x3D
     display = qp_sh1106_make_i2c_device(OLED_HEIGHT, OLED_WIDTH, 0x3C); // width and height are swapped before rotation
     qp_init(display, QP_ROTATION_90);
     qp_clear(display);
