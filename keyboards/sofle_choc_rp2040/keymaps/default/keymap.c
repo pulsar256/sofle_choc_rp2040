@@ -48,6 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                           KC_LCTL, MO(LAYER_1), KC_LGUI, KC_LALT, KC_ENT,    KC_SPC,   KC_RALT, MO(LAYER_3), MO(LAYER_2),     KC_RCTL
     ),
 
+    // red
     [LAYER_1] = LAYOUT(
        _______, _______, _______, _______, _______,  _______,                       _______, _______, _______, KC_MINUS, KC_EQUAL,     KC_PAGE_UP,
        _______, _______, KC_HOME, KC_UP,   KC_END,   _______,                       _______, KC_HOME, KC_UP,   KC_END,   _______,      KC_PAGE_DOWN,
@@ -56,6 +57,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                          _______, _______, _______,  _______, _______,    _______,  _______, _______, _______, _______
     ),
 
+    // green
     [LAYER_2] = LAYOUT(
        KC_F1,   KC_F2,                 KC_F3,                  KC_F4,   KC_F5,   KC_F6,                         KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
        _______, KC_LEFT_BRACKET,       KC_RIGHT_BRACKET,       _______, _______, _______,                       _______, KC_VOLD, KC_MSTP, KC_VOLU, _______, KC_PAUSE,
@@ -64,8 +66,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                        _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______
     ),
 
+    // blue
     [LAYER_3] = LAYOUT(
-        _______, _______, _______,    _______,    _______,    _______,                       _______,         _______,               _______,                KC_MINUS,         KC_EQUAL,     KC_PAGE_UP,
+        QK_RGB_MATRIX_MODE_PREVIOUS, QK_RGB_MATRIX_MODE_NEXT, QK_RGB_MATRIX_VALUE_DOWN,    QK_RGB_MATRIX_VALUE_UP,    QK_RGB_MATRIX_SPEED_DOWN,    QK_RGB_MATRIX_SPEED_UP,                       QK_RGB_MATRIX_TOGGLE,         _______,               _______,                KC_MINUS,         KC_EQUAL,     KC_PAGE_UP,
         _______, _______, _______,    _______,    _______,    _______,                       _______,         KC_HOME,               KC_UP,                  KC_END,           _______,      KC_PAGE_DOWN,
         _______, _______, _______,    _______,    _______,    _______,                       _______,         KC_LEFT,               KC_DOWN ,               KC_RIGHT,         KC_BACKSLASH, _______,
         _______, _______, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), _______, _______,     _______, KC_LEFT_BRACKET, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), KC_RIGHT_BRACKET, _______,      _______,
@@ -75,7 +78,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [LAYER_0] ={ ENCODER_CCW_CW(KC_VOLD, KC_VOLU),       ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
+    [LAYER_0] ={ ENCODER_CCW_CW(KC_VOLD, KC_VOLU),       ENCODER_CCW_CW(QK_MOUSE_WHEEL_DOWN, QK_MOUSE_WHEEL_UP) },
     [LAYER_1] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),      ENCODER_CCW_CW(KC_UP, KC_DOWN)   },
     [LAYER_2] ={ ENCODER_CCW_CW(KC_LEFT, KC_RIGHT),      ENCODER_CCW_CW(KC_UP, KC_DOWN)   },
     [LAYER_3] ={ ENCODER_CCW_CW(LCTL(KC_Z), RCS(KC_Z)),  ENCODER_CCW_CW(KC_MPRV, KC_MNXT) },
@@ -102,11 +105,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                         rgb_matrix_set_color(index, RGB_BLUE);
                         break;
                     case KC_F:
-                        rgb_matrix_set_color(index, RGB_YELLOW);
-                        break;
                     case KC_J:
-                        rgb_matrix_set_color(index, RGB_YELLOW);
-                        break;
                     case KC_LGUI:
                         rgb_matrix_set_color(index, RGB_YELLOW);
                         break;
@@ -238,7 +237,7 @@ void keyboard_pre_init_user(void) {
 }
 
 void keyboard_post_init_kb(void) {
-    rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
+    // rgb_matrix_mode(RGB_MATRIX_TYPING_HEATMAP);
 }
 
 void suspend_power_down_user() {
