@@ -19,10 +19,10 @@
         "command": true,
         "console": true,
         "extrakey": true,
-        "mousekey": false,
+        "mousekey": true,
         "nkro": true,
         "rgb_matrix": true,
-        "oled": false
+        "oled": true
     },
     "split": {
         "enabled": true,
