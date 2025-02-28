@@ -139,11 +139,11 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
 bool oled_task_user(void) {
     char buffer[32];
-    oled_write_P(PSTR("Lyr: \n"), false);
+    oled_write_P(PSTR("Layer: \n"), false);
 
         switch (get_highest_layer(layer_state)) {
             case LAYER_0:
-                oled_write("Def\n", false);
+                oled_write("Default\n", false);
                 break;
             case LAYER_1:
                 oled_write("Red\n", false);
@@ -161,22 +161,22 @@ bool oled_task_user(void) {
         oled_write("\nRGB LEDs\n",false);
 
         uint8_t matrix_mode = rgb_matrix_get_mode();
-        oled_write("Fx: ",false);
-        sprintf(buffer,"%02d\n",matrix_mode);
+        oled_write("FX:  ",false);
+        sprintf(buffer,"%03d\n",matrix_mode);
         oled_write(buffer,false);
 
         uint8_t matrix_brigtness = rgb_matrix_get_val();
-        oled_write("Br: ",false);
+        oled_write("BR:  ",false);
         sprintf(buffer,"%03d\n",matrix_brigtness);
         oled_write(buffer,false);
 
         uint8_t matrix_speed = rgb_matrix_get_speed();
-        oled_write("Spd: ",false);
+        oled_write("SPD: ",false);
         sprintf(buffer,"%03d\n",matrix_speed);
         oled_write(buffer,false);
 
         uint8_t wpm = get_current_wpm();
-        oled_write("WPM: ",false);
+        oled_write("\nWPM: ",false);
         sprintf(buffer,"%03d\n",wpm);
         oled_write(buffer,false);
 
