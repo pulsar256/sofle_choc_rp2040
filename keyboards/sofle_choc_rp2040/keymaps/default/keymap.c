@@ -18,7 +18,21 @@
 #include QMK_KEYBOARD_H
 #include "gpio.h"
 #include <math.h>
-
+/*
+*         c5     c4     c3     c2     c1     c0
+*     ,-----------------------------------------.                    ,-----------------------------------------.
+* r0  |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  | Bspc |
+*     |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+* r1  | ESC  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Del  |
+*     |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+* r2  | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
+*     |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
+* r3  |LShift|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
+*     `-----------------------------------------/       /     \      \-----------------------------------------'
+* r4             | LCTL | MO1  | LCMD | LALT | /Enter  /       \Space \  | RALT |  MO3 |  MO2 | RCTL |
+*                |      |      |      |      |/       /         \      \ |      |      |      |      |
+*                `----------------------------------'           '------''---------------------------'
+*/
 enum layer_names { LAYER_0, LAYER_1, LAYER_2, LAYER_3 };
 
 
@@ -26,9 +40,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
 *         c5     c4     c3     c2     c1     c0
 *     ,-----------------------------------------.                    ,-----------------------------------------.
-* r0  |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  | Bspc |
+* r0  | ESC   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  | Bspc |
 *     |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-* r1  | ESC  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Del  |
+* r1  | `    |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Del  |
 *     |------+------+------+------+------+------|                    |------+------+------+------+------+------|
 * r2  | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
 *     |------+------+------+------+------+------|  Mute |    | Pause |------+------+------+------+------+------|
@@ -52,27 +66,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // red
     [LAYER_1] = LAYOUT(
        _______, _______, _______, _______, _______,  _______,                       _______, _______, _______, KC_MINUS, KC_EQUAL,     KC_PAGE_UP,
-       _______, _______, KC_HOME, KC_UP,   KC_END,   _______,                       _______, KC_HOME, KC_UP,   KC_END,   _______,      KC_PAGE_DOWN,
+       _______, _______, KC_HOME, KC_UP,   KC_END,   _______,                       _______, _______, KC_UP,   KC_LEFT_BRACKET,   KC_RIGHT_BRACKET,      KC_PAGE_DOWN,
        _______, _______, KC_LEFT, KC_DOWN, KC_RIGHT, _______,                       _______, KC_LEFT, KC_DOWN, KC_RIGHT, KC_BACKSLASH, _______,
        _______, _______, _______, _______, _______,  _______, _______,    _______,  _______, _______, _______, _______,  _______,      _______,
-                         _______, _______, _______,  _______, _______,    _______,  _______, _______, _______, _______
+                         _______, _______, _______,  _______, KC_SPC,    _______,  _______, _______, _______, _______
     ),
 
     // green
     [LAYER_2] = LAYOUT(
-       KC_F1,   KC_F2,                 KC_F3,                  KC_F4,   KC_F5,   KC_F6,                         KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-       _______, KC_LEFT_BRACKET,       KC_RIGHT_BRACKET,       _______, _______, _______,                       _______, KC_VOLD, KC_MSTP, KC_VOLU, _______, KC_PAUSE,
-       _______, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), _______, _______, _______,                       _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, KC_PRINT_SCREEN,
-       _______, _______,               _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
-                                       _______,                _______, _______, _______, _______,    _______,  _______, _______, _______, _______
+       KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                         KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
+       _______, _______, _______, _______, _______, _______,                       _______, KC_VOLD, KC_MSTP, KC_VOLU, _______, KC_PAUSE,
+       _______, _______, _______, _______, _______, _______,                       _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, KC_PRINT_SCREEN,
+       _______, _______, _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______, _______, _______,
+                         _______, _______, _______, _______, _______,    _______,  _______, _______, _______, _______
     ),
 
     // blue
     [LAYER_3] = LAYOUT(
-        QK_RGB_MATRIX_MODE_PREVIOUS, QK_RGB_MATRIX_MODE_NEXT, QK_RGB_MATRIX_VALUE_DOWN,    QK_RGB_MATRIX_VALUE_UP,    QK_RGB_MATRIX_SPEED_DOWN,    QK_RGB_MATRIX_SPEED_UP,                       QK_RGB_MATRIX_TOGGLE,         _______,               _______,                KC_MINUS,         KC_EQUAL,     KC_PAGE_UP,
-        _______, _______, _______,    _______,    _______,    _______,                       _______,         KC_HOME,               KC_UP,                  KC_END,           _______,      KC_PAGE_DOWN,
-        _______, _______, _______,    _______,    _______,    _______,                       _______,         KC_LEFT,               KC_DOWN ,               KC_RIGHT,         KC_BACKSLASH, _______,
-        _______, _______, LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), _______, _______,     _______, KC_LEFT_BRACKET, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), KC_RIGHT_BRACKET, _______,      _______,
+        QK_RGB_MATRIX_MODE_PREVIOUS, QK_RGB_MATRIX_MODE_NEXT, QK_RGB_MATRIX_VALUE_DOWN,  QK_RGB_MATRIX_VALUE_UP,    QK_RGB_MATRIX_SPEED_DOWN,    QK_RGB_MATRIX_SPEED_UP,                       QK_RGB_MATRIX_TOGGLE,         _______,               _______,                KC_MINUS,         KC_EQUAL,     KC_PAGE_UP,
+        _______, _______, _______,    LSFT(KC_LEFT_BRACKET),  LSFT(KC_RIGHT_BRACKET),    _______,                       _______,         KC_HOME,               KC_UP,                  KC_END,           _______,      KC_PAGE_DOWN,
+        _______, _______, _______,    KC_LEFT_BRACKET,        KC_RIGHT_BRACKET,          _______,                       _______,         KC_LEFT,               KC_DOWN ,               KC_RIGHT,         KC_BACKSLASH, _______,
+        _______, _______, LCTL(KC_X), LCTL(KC_C),LCTL(KC_V),  _______,                   _______,  _______,             KC_LEFT_BRACKET, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), KC_RIGHT_BRACKET, _______,      _______,
                           _______,    _______,    _______,    _______, _______,     _______, _______,         _______,               _______,                _______
     ),
 };
