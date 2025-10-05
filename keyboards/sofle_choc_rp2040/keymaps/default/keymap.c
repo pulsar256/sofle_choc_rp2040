@@ -84,10 +84,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // blue
     [LAYER_3] = LAYOUT(
         QK_RGB_MATRIX_MODE_PREVIOUS, QK_RGB_MATRIX_MODE_NEXT, QK_RGB_MATRIX_VALUE_DOWN,  QK_RGB_MATRIX_VALUE_UP,    QK_RGB_MATRIX_SPEED_DOWN,    QK_RGB_MATRIX_SPEED_UP,                       QK_RGB_MATRIX_TOGGLE,         _______,               _______,                KC_MINUS,         KC_EQUAL,     KC_PAGE_UP,
-        _______, _______, _______,    LSFT(KC_LEFT_BRACKET),  LSFT(KC_RIGHT_BRACKET),    _______,                       _______,         KC_HOME,               KC_UP,                  KC_END,           _______,      KC_PAGE_DOWN,
-        _______, _______, _______,    KC_LEFT_BRACKET,        KC_RIGHT_BRACKET,          _______,                       _______,         KC_LEFT,               KC_DOWN ,               KC_RIGHT,         KC_BACKSLASH, _______,
-        _______, _______, LCTL(KC_X), LCTL(KC_C),LCTL(KC_V),  _______,                   _______,  _______,             KC_LEFT_BRACKET, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), KC_RIGHT_BRACKET, _______,      _______,
-                          _______,    _______,    _______,    _______, _______,     _______, _______,         _______,               _______,                _______
+        _______,                     _______, _______,    LSFT(KC_LEFT_BRACKET),  LSFT(KC_RIGHT_BRACKET),    _______,                       _______,         KC_HOME,               KC_UP,                  KC_END,           _______,      KC_PAGE_DOWN,
+        _______,                     _______, _______,    KC_LEFT_BRACKET,        KC_RIGHT_BRACKET,          _______,                       _______,         KC_LEFT,               KC_DOWN ,               KC_RIGHT,         KC_BACKSLASH, _______,
+        _______,                     _______, _______,    LSFT(KC_9),                LSFT(KC_0),                   _______,                   _______,  _______,             KC_LEFT_BRACKET, LSFT(KC_LEFT_BRACKET), LSFT(KC_RIGHT_BRACKET), KC_RIGHT_BRACKET, _______,      _______,
+                                              _______,    _______,    _______,    _______, _______,     _______, _______,         _______,               _______,                _______
     ),
 };
 
